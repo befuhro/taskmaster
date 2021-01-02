@@ -2,10 +2,8 @@ package task_master
 
 import (
 	"fmt"
-	"io/ioutil"
 	"os"
-
-	"gopkg.in/yaml.v2"
+	"syscall"
 
 	"taskmaster/task_master/tasks"
 )
@@ -15,28 +13,27 @@ type TaskMaster struct {
 	tasks    tasks.Tasks
 }
 
-func NewJobControl(confPath string) *TaskMaster {
-	return &TaskMaster{
-		confPath: confPath,
-	}
-}
-
-func (j *TaskMaster) LoadConfig() error {
-	data, err := ioutil.ReadFile(j.confPath)
+func NewTaskMaster(confPath string) (t *TaskMaster, err error) {
+	t = &TaskMaster{confPath: confPath}
+	err = t.loadConfig()
 	if err != nil {
-		return err
+		return
 	}
-	return yaml.Unmarshal(data, &j.tasks)
+	err = t.tasks.Start()
+	return
 }
 
-func (j *TaskMaster) HandleSignals(signalChannel chan os.Signal) {
+func (t *TaskMaster) HandleSignals(signalChannel chan os.Signal) {
 	for {
 		sig := <-signalChannel
-		for _, task := range j.tasks.Tasks {
-			if sig.String() == task.StopSignal {
-				fmt.Println(task)
-				fmt.Println()
-			}
+		if sig == syscall.SIGHUP {
+			t.reloadConfig()
+		} else {
+			t.tasks.HandleSIG(sig.String())
 		}
 	}
+}
+
+func (t *TaskMaster) stop() {
+	fmt.Println("STOP")
 }

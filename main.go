@@ -1,9 +1,11 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
 	"os"
 	"os/signal"
+
 	"taskmaster/task_master"
 )
 
@@ -14,12 +16,22 @@ func main() {
 
 	fmt.Printf("%v\n\n", os.Getpid())
 
-	signalChannel := make(chan os.Signal, 2)
+	signalChannel := make(chan os.Signal, 10)
 	signal.Notify(signalChannel)
 
-	jC := task_master.NewJobControl(os.Args[1])
-	if err := jC.LoadConfig(); err != nil {
+	tM, err := task_master.NewTaskMaster(os.Args[1])
+	if err != nil {
 		panic(err)
 	}
-	jC.HandleSignals(signalChannel)
+
+	go tM.HandleSignals(signalChannel)
+
+	reader := bufio.NewReader(os.Stdin)
+	for {
+		fmt.Print("Enter text: ")
+		cmd, _ := reader.ReadString('\n')
+		if stop := tM.HandleCmd(cmd); stop {
+			break
+		}
+	}
 }
