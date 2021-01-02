@@ -4,8 +4,7 @@ import (
 	"fmt"
 	"os"
 	"os/signal"
-	"taskmaster/job_control"
-	"taskmaster/parse_config"
+	"taskmaster/task_master"
 )
 
 func main() {
@@ -13,18 +12,14 @@ func main() {
 		panic("1 argument expected")
 	}
 
+	fmt.Printf("%v\n\n", os.Getpid())
+
 	signalChannel := make(chan os.Signal, 2)
 	signal.Notify(signalChannel)
 
-	jobsConf, err := parse_config.ParseConfig(os.Args[1])
-	if err != nil {
+	jC := task_master.NewJobControl(os.Args[1])
+	if err := jC.LoadConfig(); err != nil {
 		panic(err)
 	}
-
-	fmt.Println(jobsConf)
-
-	jC := job_control.NewJobControl()
-	go jC.HandleSignals(signalChannel)
-
-	//time.Sleep(20 * time.Second)
+	jC.HandleSignals(signalChannel)
 }
