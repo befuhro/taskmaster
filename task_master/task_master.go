@@ -36,4 +36,5 @@ func (t *TaskMaster) HandleSignals(signalChannel chan os.Signal) {
 
 func (t *TaskMaster) stop() {
 	fmt.Println("STOP")
+	t.tasks.Stop()
 }

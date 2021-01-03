@@ -1,9 +1,11 @@
 package tasks
 
 import (
+	"log"
 	"os"
 	"os/exec"
 	"strings"
+	"syscall"
 )
 
 type Task struct {
@@ -21,12 +23,10 @@ type Task struct {
 	StdOut       string            `yaml:"stdout"`
 	StdErr       string            `yaml:"stderr"`
 	Env          map[string]string `yaml:"env"`
-	outFile		*os.File
-	errFile		*os.File
-
+	cmd          *exec.Cmd
 }
 
-func (t *Task) redirectOutput() error {
+func (t *Task) redirectOutput(cmd *exec.Cmd) error {
 	outFile, err := os.Create(t.StdOut)
 	if err != nil {
 		return err
@@ -35,22 +35,28 @@ func (t *Task) redirectOutput() error {
 	if err != nil {
 		return err
 	}
-	t.outFile = outFile
-	t.errFile = errFile
+	cmd.Stderr = errFile
+	cmd.Stdout = outFile
 	return nil
 }
 
+func (t *Task) PrintStatus() {
+	log.Println(t.cmd.Process.Pid, t.cmd.ProcessState)
+}
+
+func (t *Task) Stop() error {
+	return syscall.Kill(-t.cmd.Process.Pid, syscall.SIGKILL)
+}
+
 func (t *Task) Start() error {
-	if err := t.redirectOutput(); err != nil {
-		return err
-	}
 	args := strings.Split(t.Cmd, " ")
-	cmd := exec.Command(args[0], args[1:]...)
-	cmd.Stderr = t.errFile
-	cmd.Stdout = t.outFile
-	if err := cmd.Start(); err != nil {
+	t.cmd = exec.Command(args[0], args[1:]...)
+	t.cmd.SysProcAttr = &syscall.SysProcAttr{Setpgid: true}
+
+	if err := t.redirectOutput(t.cmd); err != nil {
 		return err
 	}
-	cmd.Wait()
+	log.Println(args)
+	go t.cmd.Run()
 	return nil
 }

@@ -1,7 +1,8 @@
 programs:
-  nginx:
-#    cmd: "/usr/local/bin/nginx -c /etc/nginx/test.conf"
-    cmd: "echo nginx"
+  docker:
+#    cmd: "docker-compose -f /tmp/Dating-web-app/docker-compose.yml up"
+#    cmd: "echo nginx"
+    cmd: "yarn --cwd /home/befuhro/Desktop/matcha/web_app dev"
     numprocs: 1
     umask: 022
     workingdir: /tmp
@@ -14,24 +15,24 @@ programs:
     starttime: 5
     stopsignal: "terminated"
     stoptime: 10
-    stdout: ./output/nginx.stdout
-    stderr: ./output/nginx.stderr
+    stdout: ./output/docker.stdout
+    stderr: ./output/docker.stderr
     env:
       STARTED_BY: taskmaster
       ANSWER: 42
-  vogsphere:
-#    cmd: "/usr/local/bin/vogsphere-worker --no-prefork"
-    cmd: "echo vogsphere"
-    numprocs: 8
-    umask: 077
-    workingdir: /tmp
-    autostart: true
-    autorestart: unexpected
-    exitcodes:
-      - 0
-    startretries: 3
-    starttime: 5
-    stopsignal: "user defined signal 1"
-    stoptime: 10
-    stdout: ./output/vgsworker.stdout
-    stderr: ./output/vgsworker.stderr
+#  vogsphere:
+##    cmd: "/usr/local/bin/vogsphere-worker --no-prefork"
+#    cmd: "echo vogsphere"
+#    numprocs: 8
+#    umask: 077
+#    workingdir: /tmp
+#    autostart: true
+#    autorestart: unexpected
+#    exitcodes:
+#      - 0
+#    startretries: 3
+#    starttime: 5
+#    stopsignal: "user defined signal 1"
+#    stoptime: 10
+#    stdout: ./output/vgsworker.stdout
+#    stderr: ./output/vgsworker.stderr

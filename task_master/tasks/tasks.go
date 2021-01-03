@@ -6,7 +6,7 @@ import (
 )
 
 type Tasks struct {
-	Tasks map[string]Task `yaml:"programs"`
+	Tasks map[string]*Task `yaml:"programs"`
 }
 
 func (t *Tasks) Start() error {
@@ -14,6 +14,13 @@ func (t *Tasks) Start() error {
 		if err := task.Start(); err != nil {
 			return err
 		}
+	}
+	return nil
+}
+
+func (t *Tasks) Stop() error {
+	for _, task := range t.Tasks {
+		task.Stop()
 	}
 	return nil
 }
@@ -29,4 +36,7 @@ func (t *Tasks) HandleSIG(sig string) {
 
 func (t *Tasks) PrintStatus() {
 	log.Println("PrintStatus")
+	for _, task := range t.Tasks {
+		task.PrintStatus()
+	}
 }
