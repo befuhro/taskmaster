@@ -10,8 +10,6 @@ type Tasks struct {
 }
 
 func (t *Tasks) Start() error {
-	log.Println("(t *Tasks) Start()")
-	log.Println(t.Tasks)
 	for _, task := range t.Tasks {
 		if err := task.Start(); err != nil {
 			return err
@@ -59,4 +57,12 @@ func (t *Tasks) PrintStatus() {
 	for _, task := range t.Tasks {
 		task.PrintStatus()
 	}
+}
+
+func (t *Tasks) GetTaskStatus(taskName string) (string, error) {
+	task, ok := t.Tasks[taskName]
+	if !ok {
+		return "", fmt.Errorf("task '%v' does not exist", taskName)
+	}
+	return task.GetStatus(), nil
 }

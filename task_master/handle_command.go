@@ -20,7 +20,7 @@ func (t *TaskMaster) WaitCmd() {
 		if cmd == "status\n" {
 			t.tasks.PrintStatus()
 		} else if cmd == "stop\n" {
-			t.tasks.Stop()
+			t.StopTasks()
 			t.wg.Done()
 			close(t.stopChan)
 			break

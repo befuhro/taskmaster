@@ -1,6 +1,6 @@
 programs:
-  test:
-    cmd: "./program/program"
+  basic_tests:
+    cmd: "./basic_tests"
     numprocs: 1
     umask: 022
     workingdir: /tmp
@@ -13,8 +13,8 @@ programs:
     starttime: 0
     stopsignal: "terminated"
     stoptime: 10
-    stdout: ./output/test.stdout
-    stderr: ./output/test.stderr
+    stdout: ./basic_tests.stdout
+    stderr: ./basic_tests.stderr
     env:
       STARTED_BY: taskmaster
       ANSWER: 42

@@ -1,0 +1,20 @@
+programs:
+  start_and_stop_tests:
+    cmd: "./start_and_stop_tests"
+    numprocs: 1
+    umask: 022
+    workingdir: /tmp
+    autostart: true
+    autorestart: unexpected
+    exitcodes:
+      - 0
+      - 2
+    startretries: 3
+    starttime: 0
+    stopsignal: "terminated"
+    stoptime: 0
+    stdout: ./start_and_stop_tests.stdout
+    stderr: ./start_and_stop_tests.stderr
+    env:
+      STARTED_BY: taskmaster
+      ANSWER: 42

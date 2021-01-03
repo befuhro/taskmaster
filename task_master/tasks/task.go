@@ -50,6 +50,21 @@ func (t *Task) redirectOutput(cmd *exec.Cmd) error {
 	return nil
 }
 
+func (t *Task) GetStatus() string {
+	pState := t.cmd.ProcessState.String()
+	if t.cmd.ProcessState == nil {
+		return "running"
+	}
+	return pState
+}
+
+func (t *Task) GetPid() (int, error) {
+	if t.cmd.Process == nil {
+		return 0, fmt.Errorf("process is not started yet")
+	}
+	return t.cmd.Process.Pid, nil
+}
+
 func (t *Task) PrintStatus() {
 	pState := t.cmd.ProcessState.String()
 	if t.cmd.ProcessState == nil {
@@ -59,12 +74,14 @@ func (t *Task) PrintStatus() {
 }
 
 func (t *Task) Stop() error {
-	fmt.Println("(t *Task) Stop()", t.cmd.Process)
 	if t.cmd.Process == nil {
-		return nil
+		return fmt.Errorf("process is not running")
 	}
 	// Kill process after stop time * second
 	time.AfterFunc(time.Duration(t.StopTime) * time.Second, func() {
+		if t.cmd.Process == nil {
+			return
+		}
 		if err := syscall.Kill(-t.cmd.Process.Pid, syscall.SIGKILL); err != nil {
 			log.Println(err)
 		}
@@ -74,7 +91,6 @@ func (t *Task) Stop() error {
 
 func (t *Task) Start() error {
 	args := strings.Split(t.Cmd, " ")
-	log.Println(args)
 	t.cmd = exec.Command(args[0], args[1:]...)
 	t.cmd.SysProcAttr = &syscall.SysProcAttr{Setpgid: true}
 	if err := t.redirectOutput(t.cmd); err != nil {
@@ -91,6 +107,5 @@ func (t *Task) Start() error {
 			})
 		}(t.cmd)
 	}
-
 	return nil
 }
