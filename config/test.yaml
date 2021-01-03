@@ -1,0 +1,20 @@
+programs:
+  test:
+    cmd: "./program/program"
+    numprocs: 1
+    umask: 022
+    workingdir: /tmp
+    autostart: true
+    autorestart: unexpected
+    exitcodes:
+      - 0
+      - 2
+    startretries: 3
+    starttime: 0
+    stopsignal: "terminated"
+    stoptime: 10
+    stdout: ./output/test.stdout
+    stderr: ./output/test.stderr
+    env:
+      STARTED_BY: taskmaster
+      ANSWER: 42

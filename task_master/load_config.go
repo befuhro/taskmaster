@@ -3,7 +3,6 @@ package task_master
 import (
 	"io/ioutil"
 	"log"
-	"reflect"
 
 	"gopkg.in/yaml.v2"
 
@@ -32,7 +31,7 @@ func (t *TaskMaster) reloadConfig() error {
 	}
 	for taskName, task := range loadedTasks.Tasks {
 		oldTask, ok := t.tasks.Tasks[taskName]
-		if !ok || !tasksAreEqual(oldTask, task) {
+		if !ok || !tasks.TaskCmp(oldTask, task) {
 			if err = oldTask.Stop(); err != nil {
 				log.Println(err)
 			}
@@ -43,24 +42,4 @@ func (t *TaskMaster) reloadConfig() error {
 		}
 	}
 	return nil
-}
-
-func tasksAreEqual(oldTask, newTask *tasks.Task) bool {
-	if oldTask.Cmd != newTask.Cmd ||
-		oldTask.NumProcs != newTask.NumProcs ||
-		oldTask.UMask != newTask.UMask ||
-		oldTask.WorkingDir != newTask.WorkingDir ||
-		oldTask.AutoStart != newTask.AutoStart ||
-		oldTask.AutoRestart != newTask.AutoRestart ||
-		!reflect.DeepEqual(oldTask.ExitCodes, newTask.ExitCodes) ||
-		oldTask.StartRetries != newTask.StartRetries ||
-		oldTask.StartTime != newTask.StartTime ||
-		oldTask.StopSignal != newTask.StopSignal ||
-		oldTask.StopTime != newTask.StopTime ||
-		oldTask.StdOut != newTask.StdOut ||
-		oldTask.StdErr != newTask.StdErr ||
-		!reflect.DeepEqual(oldTask.Env, newTask.Env) {
-		return false
-	}
-	return true
 }

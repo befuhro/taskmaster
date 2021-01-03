@@ -10,6 +10,8 @@ type Tasks struct {
 }
 
 func (t *Tasks) Start() error {
+	log.Println("(t *Tasks) Start()")
+	log.Println(t.Tasks)
 	for _, task := range t.Tasks {
 		if err := task.Start(); err != nil {
 			return err

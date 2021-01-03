@@ -1,11 +1,13 @@
 package tasks
 
 import (
+	"fmt"
 	"log"
 	"os"
 	"os/exec"
 	"strings"
 	"syscall"
+	"time"
 )
 
 type Task struct {
@@ -57,18 +59,38 @@ func (t *Task) PrintStatus() {
 }
 
 func (t *Task) Stop() error {
-	//t.cmd.Process.
+	fmt.Println("(t *Task) Stop()", t.cmd.Process)
+	if t.cmd.Process == nil {
+		return nil
+	}
+	// Kill process after stop time * second
+	time.AfterFunc(time.Duration(t.StopTime) * time.Second, func() {
+		if err := syscall.Kill(-t.cmd.Process.Pid, syscall.SIGKILL); err != nil {
+			log.Println(err)
+		}
+	})
 	return syscall.Kill(-t.cmd.Process.Pid, syscall.SIGTERM)
 }
 
 func (t *Task) Start() error {
 	args := strings.Split(t.Cmd, " ")
+	log.Println(args)
 	t.cmd = exec.Command(args[0], args[1:]...)
 	t.cmd.SysProcAttr = &syscall.SysProcAttr{Setpgid: true}
 	if err := t.redirectOutput(t.cmd); err != nil {
 		return err
 	}
-	log.Println(args)
-	go t.cmd.Run()
+
+	// Run proc after given start time * second if autostart is on
+	if t.AutoStart {
+		go func(cmd *exec.Cmd) {
+			time.AfterFunc(time.Duration(t.StartTime) * time.Second, func() {
+				if err := t.cmd.Run(); err != nil {
+					log.Println(err)
+				}
+			})
+		}(t.cmd)
+	}
+
 	return nil
 }

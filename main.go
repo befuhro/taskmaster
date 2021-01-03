@@ -1,9 +1,10 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
 	"os"
+	"sync"
+
 	"taskmaster/task_master"
 )
 
@@ -11,24 +12,20 @@ func main() {
 	if len(os.Args) < 2 {
 		panic("1 argument expected")
 	}
-
-	fmt.Printf("%v\n\n", os.Getpid())
-
-
-
-	tM, err := task_master.NewTaskMaster(os.Args[1])
+	wg := sync.WaitGroup{}
+	tM, err := task_master.NewTaskMaster(os.Args[1], &wg)
 	if err != nil {
 		panic(err)
 	}
 
-	go tM.HandleSignals()
-
-	reader := bufio.NewReader(os.Stdin)
-	for {
-		fmt.Print("Enter command: ")
-		cmd, _ := reader.ReadString('\n')
-		if stop := tM.HandleCmd(cmd); stop {
-			break
-		}
+	if err = tM.StartTasks(); err != nil {
+		panic(err)
 	}
+
+	wg.Add(2)
+	go tM.WaitSignals()
+	go tM.WaitCmd()
+
+	wg.Wait()
+	fmt.Println("taskmaster is closed")
 }
