@@ -56,7 +56,6 @@ func (t *Task) Start() error {
 	args := strings.Split(t.Cmd, " ")
 	t.cmd = exec.Command(args[0], args[1:]...)
 	t.cmd.SysProcAttr = &syscall.SysProcAttr{Setpgid: true}
-
 	if err := t.redirectOutput(t.cmd); err != nil {
 		return err
 	}
