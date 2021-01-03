@@ -20,22 +20,40 @@ func (t *Tasks) Start() error {
 
 func (t *Tasks) Stop() error {
 	for _, task := range t.Tasks {
-		task.Stop()
+		if err := task.Stop(); err != nil {
+			log.Println(err)
+		}
 	}
 	return nil
+}
+
+func (t *Tasks) StopTask(taskName string) error {
+	task, ok := t.Tasks[taskName]
+	if !ok {
+		return fmt.Errorf("task '%v' does not exist", taskName)
+	}
+	return task.Stop()
+}
+
+func (t *Tasks) StartTask(taskName string) error {
+	task, ok := t.Tasks[taskName]
+	if !ok {
+		return fmt.Errorf("task '%v' does not exist", taskName)
+	}
+	return task.Start()
 }
 
 func (t *Tasks) HandleSIG(sig string) {
 	for _, task := range t.Tasks {
 		if sig == task.StopSignal {
-			fmt.Println(task)
-			fmt.Println()
+			if err := task.Stop(); err != nil {
+				log.Println(err)
+			}
 		}
 	}
 }
 
 func (t *Tasks) PrintStatus() {
-	log.Println("PrintStatus")
 	for _, task := range t.Tasks {
 		task.PrintStatus()
 	}

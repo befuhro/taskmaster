@@ -1,8 +1,8 @@
 package task_master
 
 import (
-	"fmt"
 	"os"
+	"os/signal"
 	"syscall"
 
 	"taskmaster/task_master/tasks"
@@ -23,7 +23,10 @@ func NewTaskMaster(confPath string) (t *TaskMaster, err error) {
 	return
 }
 
-func (t *TaskMaster) HandleSignals(signalChannel chan os.Signal) {
+func (t *TaskMaster) HandleSignals() {
+	signalChannel := make(chan os.Signal, 10)
+	signal.Notify(signalChannel)
+
 	for {
 		sig := <-signalChannel
 		if sig == syscall.SIGHUP {
@@ -32,9 +35,4 @@ func (t *TaskMaster) HandleSignals(signalChannel chan os.Signal) {
 			t.tasks.HandleSIG(sig.String())
 		}
 	}
-}
-
-func (t *TaskMaster) stop() {
-	fmt.Println("STOP")
-	t.tasks.Stop()
 }

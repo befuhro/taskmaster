@@ -1,5 +1,5 @@
 programs:
-  docker:
+  node:
 #    cmd: "docker-compose -f /tmp/Dating-web-app/docker-compose.yml up"
 #    cmd: "echo nginx"
     cmd: "yarn --cwd /home/befuhro/Desktop/matcha/web_app dev"

@@ -41,7 +41,11 @@ func (t *Task) redirectOutput(cmd *exec.Cmd) error {
 }
 
 func (t *Task) PrintStatus() {
-	log.Println(t.cmd.Process.Pid, t.cmd.ProcessState)
+	pState := t.cmd.ProcessState.String()
+	if t.cmd.ProcessState == nil {
+		pState = "running"
+	}
+	log.Println(t.cmd.Process.Pid, pState)
 }
 
 func (t *Task) Stop() error {
