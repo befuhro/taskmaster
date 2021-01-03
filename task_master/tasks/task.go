@@ -27,16 +27,24 @@ type Task struct {
 }
 
 func (t *Task) redirectOutput(cmd *exec.Cmd) error {
-	outFile, err := os.Create(t.StdOut)
-	if err != nil {
-		return err
+	if t.StdOut != "" {
+		outFile, err := os.Create(t.StdOut)
+		if err != nil {
+			return err
+		}
+		cmd.Stdout = outFile
+	} else {
+		cmd.Stdout = os.Stdout
 	}
-	errFile, err := os.Create(t.StdErr)
-	if err != nil {
-		return err
+	if t.StdErr != "" {
+		errFile, err := os.Create(t.StdErr)
+		if err != nil {
+			return err
+		}
+		cmd.Stderr = errFile
+	} else {
+		cmd.Stderr = os.Stderr
 	}
-	cmd.Stderr = errFile
-	cmd.Stdout = outFile
 	return nil
 }
 
@@ -49,7 +57,8 @@ func (t *Task) PrintStatus() {
 }
 
 func (t *Task) Stop() error {
-	return syscall.Kill(-t.cmd.Process.Pid, syscall.SIGKILL)
+	//t.cmd.Process.
+	return syscall.Kill(-t.cmd.Process.Pid, syscall.SIGTERM)
 }
 
 func (t *Task) Start() error {
