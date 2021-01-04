@@ -33,7 +33,6 @@ func (t *Task) Stop() error {
 	if err := t.terminate(); err != nil {
 		return err
 	}
-	// Kill process after stop time * second
 	time.AfterFunc(time.Duration(t.StopTime)*time.Second, t.kill)
 	return nil
 }
@@ -47,7 +46,6 @@ func (t *Task) Start() error {
 	if err := t.redirectOutput(); err != nil {
 		return err
 	}
-
 	// Run proc after given start time * second if autostart is on
 	if t.AutoStart {
 		time.AfterFunc(time.Duration(t.StartTime)*time.Second, t.asyncRun)

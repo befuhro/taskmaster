@@ -8,11 +8,7 @@ import (
 func (t *Task) GetStatus() string {
 	t.mux.Lock()
 	defer t.mux.Unlock()
-	pState := t.cmd.ProcessState.String()
-	if t.cmd.ProcessState == nil {
-		return "running"
-	}
-	return pState
+	return t.status
 }
 
 func (t *Task) GetPid() (int, error) {

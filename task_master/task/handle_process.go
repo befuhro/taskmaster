@@ -35,11 +35,11 @@ func (t *Task) asyncRun() {
 	t.mux.Lock()
 	defer t.mux.Unlock()
 	if err := t.cmd.Start(); err != nil {
-		log.Println(err)
+		log.Println("asyncRun: ", err)
 		return
 	}
 	t.isRunning = true
-
+	t.status = "running"
 	go t.wait()
 }
 
@@ -48,12 +48,16 @@ func (t *Task) wait() {
 	t.mux.Lock()
 	cmd := *t.cmd
 	t.mux.Unlock()
-	if err := cmd.Wait(); err != nil {
-		log.Println("ERROR\tcmd.Wait():", err)
-	}
+	err := cmd.Wait()
 	t.mux.Lock()
 	defer t.mux.Unlock()
 	t.isRunning = false
+	if err != nil {
+		t.status = err.Error()
+		log.Println(err)
+		return
+	}
+	t.status = "stopped"
 }
 
 func (t *Task) terminate() error {
