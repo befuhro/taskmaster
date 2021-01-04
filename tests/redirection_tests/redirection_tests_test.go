@@ -14,11 +14,11 @@ import (
 )
 
 func captureOutput(f func()) (stdOut, stdErr string) {
-	rOut, wOut, err := os.Pipe()
+	rStdOut, wStdOut, err := os.Pipe()
 	if err != nil {
 		panic(err)
 	}
-	rErr, wErr, err := os.Pipe()
+	rStdErr, wStdErr, err := os.Pipe()
 	if err != nil {
 		panic(err)
 	}
@@ -29,29 +29,31 @@ func captureOutput(f func()) (stdOut, stdErr string) {
 		os.Stderr = stderr
 		log.SetOutput(os.Stderr)
 	}()
-	os.Stdout = wOut
-	os.Stderr = wErr
+	os.Stdout = wStdOut
+	os.Stderr = wStdErr
 	out := make(chan string)
 	outErr := make(chan string)
 	wg := new(sync.WaitGroup)
 	wg.Add(2)
+
 	go func() {
 		var buf bytes.Buffer
 		wg.Done()
-		io.Copy(&buf, rOut)
+		io.Copy(&buf, rStdOut)
 		out <- buf.String()
 	}()
 
 	go func() {
 		var buf bytes.Buffer
 		wg.Done()
-		io.Copy(&buf, rErr)
+		io.Copy(&buf, rStdErr)
 		outErr <- buf.String()
 	}()
+
 	wg.Wait()
 	f()
-	wOut.Close()
-	wErr.Close()
+	wStdOut.Close()
+	wStdErr.Close()
 	return <-out, <-outErr
 }
 

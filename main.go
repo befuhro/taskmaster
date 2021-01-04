@@ -18,7 +18,7 @@ func main() {
 		panic(err)
 	}
 
-	if err = tM.StartTasks(); err != nil {
+	if err = tM.Start(); err != nil {
 		panic(err)
 	}
 

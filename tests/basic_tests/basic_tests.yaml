@@ -13,8 +13,8 @@ programs:
     starttime: 0
     stopsignal: "terminated"
     stoptime: 10
-    stdout: ./basic_tests.stdout
-    stderr: ./basic_tests.stderr
+#    stdout: ./basic_tests.stdout
+#    stderr: ./basic_tests.stderr
     env:
       STARTED_BY: taskmaster
       ANSWER: 42

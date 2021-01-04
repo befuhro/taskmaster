@@ -29,8 +29,8 @@ func TestConfigurationLoading(t *testing.T) {
 		StartTime:    0,
 		StopSignal:   "terminated",
 		StopTime:     10,
-		StdOut:       "./basic_tests.stdout",
-		StdErr:       "./basic_tests.stderr",
+		StdOut:       "",
+		StdErr:       "",
 		Env:          map[string]string{"STARTED_BY": "taskmaster", "ANSWER":"42"},
 	}
 	if !task2.TaskCmp(&expectedTask, task) {

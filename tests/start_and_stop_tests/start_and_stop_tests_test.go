@@ -117,6 +117,10 @@ func TestRestart(t *testing.T) {
 	} else if taskStatus != "running" {
 		t.Errorf("Start Tasks failed: task status is '%v' and not 'running'\n", taskStatus)
 	}
+	time.Sleep(25 * time.Millisecond)
+	if err = tM.Stop(); err != nil {
+		t.Errorf("Start Tasks failed: %v\n", err)
+	}
 }
 
 // Restart process by manually
@@ -141,5 +145,9 @@ func TestRestartManually(t *testing.T) {
 		t.Errorf("Start Tasks failed: %v\n", err)
 	} else if taskStatus != "running" {
 		t.Errorf("Start Tasks failed: task status is '%v' and not 'running'\n", taskStatus)
+	}
+	time.Sleep(25 * time.Millisecond)
+	if err = tM.Stop(); err != nil {
+		t.Errorf("Start Tasks failed: %v\n", err)
 	}
 }
