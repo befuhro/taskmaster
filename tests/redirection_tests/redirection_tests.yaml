@@ -1,0 +1,37 @@
+programs:
+  file_rediction:
+    cmd: "./redirection_tests"
+    numprocs: 1
+    umask: 022
+    workingdir: /tmp
+    autostart: true
+    autorestart: unexpected
+    exitcodes:
+      - 0
+      - 2
+    startretries: 3
+    starttime: 0
+    stopsignal: "terminated"
+    stoptime: 10
+    stdout: ./redirection_tests.stdout
+    stderr: ./redirection_tests.stderr
+    env:
+      STARTED_BY: taskmaster
+      ANSWER: 42
+  no_rediction:
+    cmd: "./redirection_tests"
+    numprocs: 1
+    umask: 022
+    workingdir: /tmp
+    autostart: true
+    autorestart: unexpected
+    exitcodes:
+      - 0
+      - 2
+    startretries: 3
+    starttime: 0
+    stopsignal: "terminated"
+    stoptime: 10
+    env:
+      STARTED_BY: taskmaster
+      ANSWER: 42
