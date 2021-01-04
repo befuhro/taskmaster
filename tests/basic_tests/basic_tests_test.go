@@ -1,11 +1,11 @@
 package main
 
 import (
+	task2 "taskmaster/task_master/tasks/task"
 	"testing"
 	"time"
 
 	"taskmaster/task_master"
-	"taskmaster/task_master/tasks"
 )
 
 func TestConfigurationLoading(t *testing.T) {
@@ -17,7 +17,7 @@ func TestConfigurationLoading(t *testing.T) {
 	if !ok {
 		t.Errorf("Configuration Loading failed: task 'basic_tests' was not created")
 	}
-	expectedTask := tasks.Task{
+	expectedTask := task2.Task{
 		Cmd:          "./basic_tests",
 		NumProcs:     1,
 		UMask:        18,
@@ -33,7 +33,7 @@ func TestConfigurationLoading(t *testing.T) {
 		StdErr:       "./basic_tests.stderr",
 		Env:          map[string]string{"STARTED_BY": "taskmaster", "ANSWER":"42"},
 	}
-	if !tasks.TaskCmp(&expectedTask, task) {
+	if !task2.TaskCmp(&expectedTask, task) {
 		t.Errorf("Configuration Loading failed: task 'basic_tests' was not loaded properly")
 	}
 }
@@ -46,7 +46,7 @@ func TestStartAndStopTask(t *testing.T) {
 	if err = tM.StartTasks(); err != nil {
 		t.Errorf("Start Tasks failed: %v\n", err)
 	}
-	time.Sleep(time.Second)
+	time.Sleep(25 * time.Millisecond)
 	if err = tM.StopTasks(); err != nil {
 		t.Errorf("Start Tasks failed: %v\n", err)
 	}

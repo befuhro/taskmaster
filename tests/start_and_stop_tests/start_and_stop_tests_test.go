@@ -62,12 +62,12 @@ func TestStop(t *testing.T) {
 	if err = tM.StopTasks(); err != nil {
 		t.Errorf("Start Tasks failed: %v\n", err)
 	}
-	time.Sleep(200 * time.Millisecond)
-	taskStatus, err := tM.GetTaskStatus("start_and_stop_tests")
+	time.Sleep(25 * time.Millisecond)
+	isTaskRunning, err := tM.IsTaskRunning("start_and_stop_tests")
 	if err != nil {
-		t.Errorf("Start Tasks failed: %v\n", err)
-	} else if taskStatus == "running" {
-		t.Errorf("Start Tasks failed: task status is '%v' and not 'running'\n", taskStatus)
+		t.Errorf("Stop Tasks failed: %v\n", err)
+	} else if isTaskRunning {
+		t.Errorf("Stop Tasks failed: task is runnning but be should terminated\n")
 	}
 }
 
@@ -82,14 +82,14 @@ func TestStopManually(t *testing.T) {
 	}
 	time.Sleep(25 * time.Millisecond)
 	if err = tM.StopTask("start_and_stop_tests"); err != nil {
-		t.Errorf("Start Tasks failed: %v\n", err)
+		t.Errorf("Stop Tasks failed: %v\n", err)
 	}
-	time.Sleep(200 * time.Millisecond)
-	taskStatus, err := tM.GetTaskStatus("start_and_stop_tests")
+	time.Sleep(25 * time.Millisecond)
+	isTaskRunning, err := tM.IsTaskRunning("start_and_stop_tests")
 	if err != nil {
-		t.Errorf("Start Tasks failed: %v\n", err)
-	} else if taskStatus == "running" {
-		t.Errorf("Start Tasks failed: task status is '%v' and not 'running'\n", taskStatus)
+		t.Errorf("Stop Tasks failed: %v\n", err)
+	} else if isTaskRunning {
+		t.Errorf("Stop Tasks failed: task is runnning but be should terminated\n")
 	}
 }
 

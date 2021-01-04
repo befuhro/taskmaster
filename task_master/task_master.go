@@ -7,6 +7,7 @@ import (
 	"os/signal"
 	"sync"
 	"syscall"
+	"taskmaster/task_master/tasks/task"
 	"time"
 
 	"taskmaster/task_master/tasks"
@@ -90,12 +91,15 @@ func (t *TaskMaster) GetTaskPid(taskName string) (int, error) {
 	return task.GetPid()
 }
 
-
-func (t *TaskMaster) GetTask(taskName string) (*tasks.Task, bool) {
+func (t *TaskMaster) GetTask(taskName string) (*task.Task, bool) {
 	task, ok := t.tasks.Tasks[taskName]
 	return task, ok
 }
 
 func (t *TaskMaster) GetTaskStatus(taskName string) (string, error) {
 	return t.tasks.GetTaskStatus(taskName)
+}
+
+func (t *TaskMaster) IsTaskRunning(taskName string) (bool, error) {
+	return t.tasks.IsTaskRunning(taskName)
 }

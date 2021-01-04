@@ -3,6 +3,7 @@ package task_master
 import (
 	"io/ioutil"
 	"log"
+	task2 "taskmaster/task_master/tasks/task"
 
 	"gopkg.in/yaml.v2"
 
@@ -31,7 +32,7 @@ func (t *TaskMaster) reloadConfig() error {
 	}
 	for taskName, task := range loadedTasks.Tasks {
 		oldTask, ok := t.tasks.Tasks[taskName]
-		if !ok || !tasks.TaskCmp(oldTask, task) {
+		if !ok || !task2.TaskCmp(oldTask, task) {
 			if err = oldTask.Stop(); err != nil {
 				log.Println(err)
 			}
