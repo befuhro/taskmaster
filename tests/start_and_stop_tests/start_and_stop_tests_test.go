@@ -13,7 +13,7 @@ func TestStart(t *testing.T) {
 	if err != nil {
 		t.Errorf("Start Tasks failed: %v\n", err)
 	}
-	if err = tM.StartTasks(); err != nil {
+	if err = tM.Start(); err != nil {
 		t.Errorf("Start Tasks failed: %v\n", err)
 	}
 	taskStatus, err := tM.GetTaskStatus("start_and_stop_tests")
@@ -23,7 +23,7 @@ func TestStart(t *testing.T) {
 		t.Errorf("Start Tasks failed: task status is '%v' and not 'running'\n", taskStatus)
 	}
 	time.Sleep(25 * time.Millisecond)
-	if err = tM.StopTasks(); err != nil {
+	if err = tM.Stop(); err != nil {
 		t.Errorf("Start Tasks failed: %v\n", err)
 	}
 }
@@ -44,7 +44,7 @@ func TestStartManually(t *testing.T) {
 		t.Errorf("Start Tasks failed: task status is '%v' and not 'running'\n", taskStatus)
 	}
 	time.Sleep(25 * time.Millisecond)
-	if err = tM.StopTasks(); err != nil {
+	if err = tM.Stop(); err != nil {
 		t.Errorf("Start Tasks failed: %v\n", err)
 	}
 }
@@ -55,11 +55,11 @@ func TestStop(t *testing.T) {
 	if err != nil {
 		t.Errorf("Start Tasks failed: %v\n", err)
 	}
-	if err = tM.StartTasks(); err != nil {
+	if err = tM.Start(); err != nil {
 		t.Errorf("Start Tasks failed: %v\n", err)
 	}
 	time.Sleep(25 * time.Millisecond)
-	if err = tM.StopTasks(); err != nil {
+	if err = tM.Stop(); err != nil {
 		t.Errorf("Start Tasks failed: %v\n", err)
 	}
 	time.Sleep(25 * time.Millisecond)
@@ -100,14 +100,14 @@ func TestRestart(t *testing.T) {
 	if err != nil {
 		t.Errorf("Start Tasks failed: %v\n", err)
 	}
-	if err = tM.StartTasks(); err != nil {
+	if err = tM.Start(); err != nil {
 		t.Errorf("Start Tasks failed: %v\n", err)
 	}
 	time.Sleep(25 * time.Millisecond)
-	if err = tM.StopTasks(); err != nil {
+	if err = tM.Stop(); err != nil {
 		t.Errorf("Start Tasks failed: %v\n", err)
 	}
-	if err = tM.StartTasks(); err != nil {
+	if err = tM.Start(); err != nil {
 		t.Errorf("Start Tasks failed: %v\n", err)
 	}
 	time.Sleep(25 * time.Millisecond)
@@ -129,7 +129,7 @@ func TestRestartManually(t *testing.T) {
 		t.Errorf("Start Tasks failed: %v\n", err)
 	}
 	time.Sleep(25 * time.Millisecond)
-	if err = tM.StopTasks(); err != nil {
+	if err = tM.Stop(); err != nil {
 		t.Errorf("Start Tasks failed: %v\n", err)
 	}
 	if err = tM.StartTask("start_and_stop_tests"); err != nil {
