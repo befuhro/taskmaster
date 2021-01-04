@@ -3,11 +3,10 @@ package task_master
 import (
 	"io/ioutil"
 	"log"
-	task2 "taskmaster/task_master/tasks/task"
 
 	"gopkg.in/yaml.v2"
 
-	"taskmaster/task_master/tasks"
+	"taskmaster/task_master/task"
 )
 
 func (t *TaskMaster) loadConfig() error {
@@ -15,7 +14,7 @@ func (t *TaskMaster) loadConfig() error {
 	if err != nil {
 		return err
 	}
-	if err = yaml.Unmarshal(data, &t.tasks); err != nil {
+	if err = yaml.Unmarshal(data, &t); err != nil {
 		return err
 	}
 	return nil
@@ -26,20 +25,19 @@ func (t *TaskMaster) reloadConfig() error {
 	if err != nil {
 		return err
 	}
-	var loadedTasks tasks.Tasks
-	if err = yaml.Unmarshal(data, &loadedTasks); err != nil {
+	if err = yaml.Unmarshal(data, &t); err != nil {
 		return err
 	}
-	for taskName, task := range loadedTasks.Tasks {
-		oldTask, ok := t.tasks.Tasks[taskName]
-		if !ok || !task2.TaskCmp(oldTask, task) {
+	for taskName, tsk := range t.Tasks {
+		oldTask, ok := t.Tasks[taskName]
+		if !ok || !task.TaskCmp(oldTask, tsk) {
 			if err = oldTask.Stop(); err != nil {
 				log.Println(err)
 			}
-			if err = task.Start(); err != nil {
+			if err = tsk.Start(); err != nil {
 				log.Println(err)
 			}
-			t.tasks.Tasks[taskName] = task
+			t.Tasks[taskName] = tsk
 		}
 	}
 	return nil

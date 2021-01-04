@@ -18,9 +18,9 @@ func (t *TaskMaster) WaitCmd() {
 		fmt.Print("Enter command: ")
 		cmd, _ := reader.ReadString('\n')
 		if cmd == "status\n" {
-			t.tasks.PrintStatus()
+			t.PrintStatus()
 		} else if cmd == "stop\n" {
-			t.StopTasks()
+			t.Stop()
 			t.wg.Done()
 			close(t.stopChan)
 			break
@@ -35,7 +35,7 @@ func (t *TaskMaster) WaitCmd() {
 
 func (t *TaskMaster) handleCmd(cmd string) (stop bool) {
 	if cmd == "status\n" {
-		t.tasks.PrintStatus()
+		t.PrintStatus()
 	} else if regStop.MatchString(cmd) {
 		t.stopCmd(cmd)
 	} else if regStart.MatchString(cmd) {
@@ -47,10 +47,10 @@ func (t *TaskMaster) handleCmd(cmd string) (stop bool) {
 func (t *TaskMaster) stopCmd(cmd string) {
 	args := strings.Split(cmd, " ")
 	if len(args) < 2 {
-		t.tasks.Stop()
+		t.Stop()
 	} else {
 		taskName := args[1][:len(args[1])-1]
-		if err := t.tasks.StopTask(taskName); err != nil {
+		if err := t.StopTask(taskName); err != nil {
 			log.Println("could not stop task", err)
 		} else {
 			log.Println("stopped task", taskName)
@@ -62,7 +62,7 @@ func (t *TaskMaster) startCmd(cmd string) {
 	args := strings.Split(cmd, " ")
 	if len(args) >= 2 {
 		taskName := args[1][:len(args[1])-1]
-		if err := t.tasks.StartTask(taskName); err != nil {
+		if err := t.StartTask(taskName); err != nil {
 			log.Println("could not start task", err)
 		} else {
 			log.Println("started task", taskName)

@@ -1,7 +1,7 @@
 package main
 
 import (
-	task2 "taskmaster/task_master/tasks/task"
+	task2 "taskmaster/task_master/task"
 	"testing"
 	"time"
 
@@ -43,11 +43,11 @@ func TestStartAndStopTask(t *testing.T) {
 	if err != nil {
 		t.Errorf("Start Tasks failed: %v\n", err)
 	}
-	if err = tM.StartTasks(); err != nil {
+	if err = tM.Start(); err != nil {
 		t.Errorf("Start Tasks failed: %v\n", err)
 	}
 	time.Sleep(25 * time.Millisecond)
-	if err = tM.StopTasks(); err != nil {
+	if err = tM.Stop(); err != nil {
 		t.Errorf("Start Tasks failed: %v\n", err)
 	}
 }
